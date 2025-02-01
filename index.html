@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>FreeWhen?</title>
+
+		<!-- Tailwind CSS CDN -->
+		<script src="https://cdn.tailwindcss.com"></script>
+
+		<!-- Flatpickr (Time Picker) -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<link rel="stylesheet" href="./style.css" />
+	</head>
+	<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+		<div class="container mx-auto px-4 py-8 max-w-min">
+			<!-- Header -->
+			<div class="flex justify-between items-center mb-8">
+				<div class="flex flex-col items-left">
+					<h1 class="text-3xl font-bold text-gray-800 dark:text-white">
+						FreeWhen?
+					</h1>
+					<h3 class="text-md font-bold text-gray-800 dark:text-white">
+						Figure out when everyone is free
+					</h3>
+				</div>
+				<!-- <button
+					id="themeToggle"
+					class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+				>
+					🌓 Toggle Theme
+				</button> -->
+			</div>
+
+			<!-- Add Friend Button -->
+			<div class="mb-6">
+				<button
+					onclick="addFriend()"
+					class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg transition-colors"
+				>
+					Add Friend
+				</button>
+			</div>
+
+			<!-- Friends Container -->
+			<div id="friendsContainer" class="flex"></div>
+
+			<!-- Calculate Button & Results -->
+			<div
+				class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animated"
+			>
+				<button
+					onclick="calculateFreeTime()"
+					class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full transition-colors font-semibold"
+				>
+					Find Common Free Times
+				</button>
+
+				<div id="results" class="mt-6 space-y-4"></div>
+			</div>
+		</div>
+
+		<script src="./script.js"></script>
+	</body>
+</html>
