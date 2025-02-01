@@ -76,6 +76,105 @@ function calculateFreeTime() {
 		return `${hrs}:${mins} ${ampm}`;
 	}
 
+	function minutesToPosition(minutes) {
+		return (minutes / 1440) * 100; // 1440 minutes in a day
+	}
+
+	function createTimelineBlock(start, end, color, label) {
+		const block = document.createElement("div");
+		block.className = `h-8 rounded ${color} absolute`;
+		block.style.left = `${minutesToPosition(start)}%`;
+		block.style.width = `${minutesToPosition(end - start)}%`;
+		block.title = `${minutesTo12Hour(start)} - ${minutesTo12Hour(
+			end
+		)} ${label}`;
+		return block;
+	}
+
+	function updateVisualCalendar() {
+		const container = document.getElementById("calendarTimeline");
+		container.innerHTML = "";
+
+		DAYS.forEach((day) => {
+			const dayRow = document.createElement("div");
+			dayRow.className = "relative h-10";
+
+			// Day label
+			const dayLabel = document.createElement("div");
+			dayLabel.className =
+				"left-0 w-20 text-left pr-2 text-sm font-bold text-gray-600 dark:text-gray-400";
+			dayLabel.textContent = day;
+			dayRow.appendChild(dayLabel);
+
+			// Timeline background (full day)
+			const timeline = document.createElement("div");
+			timeline.className =
+				"h-8 bg-gray-200 dark:bg-gray-700 rounded absolute w-full";
+			dayRow.appendChild(timeline);
+
+			// Add time markers
+			for (let hour = 0; hour <= 24; hour++) {
+				const marker = document.createElement("div");
+				marker.className =
+					"absolute top-7 h-4 border-l border-gray-300 dark:border-gray-600";
+				marker.style.left = `${(hour / 24) * 100}%`;
+				dayRow.appendChild(marker);
+			}
+
+			// Add busy times (from all friends)
+			const allBusy = [];
+			document.querySelectorAll(".friend").forEach((friend) => {
+				friend
+					.querySelectorAll(`.busy-times-${day.toLowerCase()} > div`)
+					.forEach((timeInput) => {
+						const [startInput, endInput] = timeInput.querySelectorAll("input");
+						const start = timeToMinutes(startInput.value);
+						const end = timeToMinutes(endInput.value);
+						if (start && end) allBusy.push({ start, end });
+					});
+			});
+
+			mergeIntervals(allBusy.sort((a, b) => a.start - b.start)).forEach(
+				(interval) => {
+					timeline.appendChild(
+						createTimelineBlock(
+							interval.start,
+							interval.end,
+							"bg-red-400/80 dark:bg-red-600/80",
+							"Busy"
+						)
+					);
+				}
+			);
+
+			// Add free times
+			const freeTimes = getFreeIntervals(mergeIntervals(allBusy));
+			freeTimes.forEach((interval) => {
+				timeline.appendChild(
+					createTimelineBlock(
+						interval.start,
+						interval.end,
+						"bg-green-400/80 dark:bg-green-600/80",
+						"Free"
+					)
+				);
+			});
+
+			container.appendChild(dayRow);
+		});
+
+		// Add time labels
+		const timeLabels = document.createElement("div");
+		timeLabels.className =
+			"flex justify-between text-sm text-gray-600 dark:text-gray-400";
+		for (let hour = 0; hour <= 24; hour++) {
+			const label = document.createElement("span");
+			label.textContent = `${hour % 12 || 12}${hour < 12 ? "a" : "p"}`;
+			timeLabels.appendChild(label);
+		}
+		container.appendChild(timeLabels);
+	}
+
 	DAYS.forEach((day) => {
 		const allBusy = [];
 		let isValid = true;
@@ -137,9 +236,11 @@ function calculateFreeTime() {
 </div>
 `;
 	}
+	updateVisualCalendar();
 }
 
 // Utility functions
+
 function timeToMinutes(time) {
 	const [hours, minutes] = time.split(":").map(Number);
 	return hours * 60 + minutes;
