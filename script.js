@@ -44,7 +44,7 @@ ${DAYS.map(
 	friendsContainer.appendChild(friendElement);
 }
 
-// Add a busy time block for a specific day
+// Add a busy time block for a specific day with flatpickr
 function addBusyTime(day, button) {
 	const container = button
 		? button.previousElementSibling
@@ -52,15 +52,21 @@ function addBusyTime(day, button) {
 	const timeBlock = document.createElement("div");
 	timeBlock.className = "time-input-group";
 	timeBlock.innerHTML = `
-<input type="time" class="p-1.5 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-white">
+<input type="text" class="p-1.5 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-white timepicker w-20 text-center">
 <span class="text-gray-500 dark:text-gray-400">to</span>
-<input type="time" class="p-1.5 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-white">
-<button onclick="this.parentElement.remove()" 
-class="ml-2 text-red-500 hover:text-red-600 transition-colors">
-✕
-</button>
+<input type="text" class="p-1.5 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-white timepicker w-20 text-center">
+<button onclick="this.parentElement.remove()" class="ml-2 text-red-500 hover:text-red-600 transition-colors">✕</button>
 `;
 	container.appendChild(timeBlock);
+
+	// Initialize flatpickr time pickers
+	timeBlock.querySelectorAll(".timepicker").forEach((input) => {
+		flatpickr(input, {
+			enableTime: true,
+			noCalendar: true,
+			dateFormat: "H:i",
+		});
+	});
 }
 
 // Calculate common free times for each day
